@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  
+  (C) Copyright Atomus Ltd 2011 - All rights reserved.
+ 
+  This software is provided "as is" without warranty of any kind,
+  express or implied, including but not limited to warranties as to
+  quality and fitness for a particular purpose. Atomus Ltd 
+  does not support the Software, nor does it warrant that the Software
+  will meet your requirements or that the operation of the Software will
+  be uninterrupted or error free or that any defects will be
+  corrected. Nothing in this statement is intended to limit or exclude
+  any liability for personal injury or death caused by the negligence of
+  Atomus Ltd, its employees, contractors or agents.
+  
+  Author Simon Dingle and Chris Derham
+ 
+-->
+<project name="TomcatAzureSessionManager" default="all">
+	<property name="dist.dir" value="dist" />
+	<property name="version" value="1.1_beta"/>
+	<property name="dist.file.name" value="tomcat-azure-session-manager-${version}.jar" />
+	<property name="dist.file" value="${dist.dir}/${dist.file.name}" />
+	<property name="dist.source.file.name" value="tomcat-azure-session-manager-${version}-sources.zip" />
+	<property name="dist.source.file" value="${dist.dir}/${dist.source.file.name}" />
+	<property name="build.dir" value="bin" />
+	<property name="deploy.lib.dir" value="./lib/deploy" />
+
+	<target name="all" depends="clean, jar, jarSource" />
+
+	<target name="clean">
+		<delete dir="${dist.dir}" />
+	</target>
+
+	<target name="jar">
+		<mkdir dir="${dist.dir}" />
+		<delete file="${dist.file}" failonerror="false" />
+		
+		<jar destfile="${dist.file}">
+			<fileset dir="${build.dir}" includes="**/*.class" />
+		</jar>
+		
+		<copy todir="${dist.dir}">
+			<fileset dir="${deploy.lib.dir}" includes="*.jar" />
+		</copy>
+	</target>
+	
+	<target name="jarSource">
+		<mkdir dir="${dist.dir}" />
+		<delete file="${dist.source.file}" failonerror="false" />
+		
+		<zip destfile="${dist.source.file}">
+			<fileset dir="." includes="src/**/*" />
+			<fileset dir="." includes="lib/**/*" />
+			<!-- excludes test property files as these contain Azure credentials -->
+			<fileset dir="." includes="test-src/uk/**/*" />
+			<fileset dir="." includes="build.xml" />
+			<fileset dir="." includes="licence.txt" />
+		</zip>
+	</target>
+</project>
