@@ -112,9 +112,14 @@ public class SessionServiceImpl implements SessionService {
 				log.debug("synch block inside saveSession sessionId:" + id + " withData:" + withData);
 				TomcatSessionStorageEntity storageEntity = findInStorage(id);
 				if (storageEntity == null) {
-					// TODO handle exception thrown if record already exists
-					createNewStorageEntity(session);
-				} else {
+					try {
+						createNewStorageEntity(session);
+					} catch (StorageException e) {
+						log.info("Found session created concurrently - updating " + id);
+						storageEntity = findInStorage(id);
+					}
+				}
+				if (storageEntity != null) {
 					if (withData) {
 						sessionMapper.mapToStorageEntityWithData(session, storageEntity);
 					} else {
@@ -131,13 +136,12 @@ public class SessionServiceImpl implements SessionService {
 	}
 
 	private void createNewStorageEntity(Session session) throws IOException {
-		if (!session.isValid()) {
-			// do nothing, no point creating a new storage entity for a session
-			// that is invalid
+		// do nothing, no point creating a new storage entity for a session that is invalid
+		if (session.isValid()) {
+			TomcatSessionStorageEntity storageEntity = new TomcatSessionStorageEntity(partitionKey, session.getIdInternal());
+			storageEntity = sessionMapper.mapToStorageEntityWithData(session, storageEntity);
+			sessionDao.insertStorageEntity(storageEntity);
 		}
-		TomcatSessionStorageEntity storageEntity = new TomcatSessionStorageEntity(partitionKey, session.getIdInternal());
-		storageEntity = sessionMapper.mapToStorageEntityWithData(session, storageEntity);
-		sessionDao.insertStorageEntity(storageEntity);
 	}
 
 	@Override

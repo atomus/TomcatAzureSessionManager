@@ -16,20 +16,54 @@
  
 -->
 <project name="TomcatAzureSessionManager" default="all">
+	<property name="build.dir" value="build/classes" />
+	<property name="build.test.dir" value="build/classes-test" />
 	<property name="dist.dir" value="dist" />
 	<property name="version" value="1.1_beta"/>
 	<property name="dist.file.name" value="tomcat-azure-session-manager-${version}.jar" />
 	<property name="dist.file" value="${dist.dir}/${dist.file.name}" />
 	<property name="dist.source.file.name" value="tomcat-azure-session-manager-${version}-sources.zip" />
 	<property name="dist.source.file" value="${dist.dir}/${dist.source.file.name}" />
-	<property name="build.dir" value="bin" />
-	<property name="deploy.lib.dir" value="./lib/deploy" />
+	<property name="test.lib.dir" value="lib/test" />
+	<property name="deploy.lib.dir" value="lib/deploy" />
+    <property name="compile.lib.dir" value="lib/compile"/>
+	<property name="report.dir"  value="build/junitreport"/>
+	
+	<path id="application" location="${dist.file.name}"/>
+	
+    <path id="classpath">
+        <fileset dir="${compile.lib.dir}" includes="**/*.jar"/>
+        <fileset dir="${deploy.lib.dir}" includes="**/*.jar"/>
+    </path>
+	
+    <path id="classpath-test">
+        <fileset dir="${test.lib.dir}" includes="**/*.jar"/>
+    </path>
 
-	<target name="all" depends="clean, jar, jarSource" />
+	<target name="all" depends="clean, compile, jar, jarSource, junit" />
 
 	<target name="clean">
+		<delete dir="${build.dir}" />
+		<delete dir="${build.test.dir}" />
 		<delete dir="${dist.dir}" />
 	</target>
+	
+    <target name="compile">
+        <mkdir dir="${build.dir}"/>
+        <javac srcdir="src" destdir="${build.dir}">
+        	<classpath>
+        		<path refid="classpath"/>
+        	</classpath>
+    	</javac>
+        <mkdir dir="${build.test.dir}"/>
+        <javac srcdir="test-src" destdir="${build.test.dir}">
+        	<classpath>
+        		<path location="${build.dir}"/>
+        		<path refid="classpath"/>
+                <path refid="classpath-test"/>
+        	</classpath>
+    	</javac>
+    </target>
 
 	<target name="jar">
 		<mkdir dir="${dist.dir}" />
@@ -57,4 +91,24 @@
 			<fileset dir="." includes="licence.txt" />
 		</zip>
 	</target>
+  
+    <target name="junit" depends="jar">
+    	<mkdir dir="${report.dir}" />
+        <junit printsummary="yes">
+            <classpath>
+            	<path location="${build.dir}" />
+            	<path location="${build.test.dir}" />
+                <path refid="classpath" />
+                <path refid="classpath-test" />
+            </classpath>
+        	<formatter type="xml"/>
+            <batchtest fork="yes" todir="${report.dir}">
+                <fileset dir="test-src" includes="**/*Test.java" />
+            </batchtest>
+        </junit>
+        <junitreport todir="${report.dir}">
+            <fileset dir="${report.dir}" includes="TEST-*.xml" />
+            <report todir="${report.dir}" />
+        </junitreport>
+    </target>
 </project>

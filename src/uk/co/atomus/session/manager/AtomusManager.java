@@ -75,14 +75,14 @@ public class AtomusManager extends StandardManager implements SessionStorageFaca
 
 	@Override
 	protected StandardSession getNewSession() {
-		log.debug("getNewSession");
+		log.info("getNewSession");
 		AtomusSession session = new AtomusSession(this, this);
 		return session;
 	}
 
 	@Override
 	public void remove(Session session) {
-		log.debug("remove session " + session.getIdInternal());
+		log.info("remove session " + session.getIdInternal());
 		super.remove(session);
 	}
 
@@ -91,10 +91,10 @@ public class AtomusManager extends StandardManager implements SessionStorageFaca
 		log.debug("findSession " + id);
 		Session session = super.findSession(id);
 		if (session == null || !session.isValid()) {
-			log.debug("no valid active session found " + id);
+			log.info("no valid active session found " + id);
 			session = loadPersistedSession(id);
 		} else {
-			log.debug("active session found " + id);
+			log.info("active session found " + id);
 			session = getMostRecentValidSession(session);
 		}
 		return session;
@@ -175,7 +175,7 @@ public class AtomusManager extends StandardManager implements SessionStorageFaca
 
 	@Override
 	public void deleteSession(Session session) {
-		log.debug("deleteSession");
+		log.info("deleteSession");
 		sessionService.deleteSession(session);
 	}
 
