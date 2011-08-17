@@ -232,7 +232,6 @@ public class AtomusManagerTest {
 
 	@Test
 	public void testRemove() throws Exception {
-		sessionService.deleteSession(session);
 		mocksControl.replay();
 		atomusManager.remove(session);
 		mocksControl.verify();
