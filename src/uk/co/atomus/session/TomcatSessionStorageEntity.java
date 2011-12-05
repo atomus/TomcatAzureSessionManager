@@ -14,14 +14,15 @@
 
 package uk.co.atomus.session;
 
-import org.soyatec.windows.azure.table.TableStorageEntity;
+import org.soyatec.windowsazure.table.AbstractTableServiceEntity;
+
 
 /**
  * Represents the tomcat session entity to be persisted to Azure Table Storage
  *
  * @author Simon Dingle and Chris Derham
  */
-public class TomcatSessionStorageEntity extends TableStorageEntity {
+public class TomcatSessionStorageEntity extends AbstractTableServiceEntity {
 	private byte[] data;
 	private String sessionId;
 	private boolean validSession;
