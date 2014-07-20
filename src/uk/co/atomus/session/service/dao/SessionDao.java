@@ -16,8 +16,9 @@ package uk.co.atomus.session.service.dao;
 
 import java.util.List;
 
-import org.soyatec.windows.azure.error.StorageException;
-import org.soyatec.windows.azure.table.TableStorageEntity;
+import org.soyatec.windowsazure.error.StorageException;
+import org.soyatec.windowsazure.table.AbstractTableServiceEntity;
+import org.soyatec.windowsazure.table.ITableServiceEntity;
 
 import uk.co.atomus.session.TomcatSessionStorageEntity;
 
@@ -27,11 +28,11 @@ public interface SessionDao {
 
 	int countEntities(String partitionKey, String rowKey);
 
-	TableStorageEntity retrieveEntity(String partitionKey, String rowKey);
+	ITableServiceEntity retrieveEntity(String partitionKey, String rowKey);
 
-	List<TableStorageEntity> retrieveEntitiesByKey(String partitionKey, String rowKey);
+	List<ITableServiceEntity> retrieveEntitiesByKey(String partitionKey, String rowKey);
 
-	List<TableStorageEntity> queryEntitiesByKeys(String partitionKey, String rowKey);
+	List<ITableServiceEntity> queryEntitiesByKeys(String partitionKey, String rowKey);
 
 	void insertStorageEntity(TomcatSessionStorageEntity storageEntity);
 

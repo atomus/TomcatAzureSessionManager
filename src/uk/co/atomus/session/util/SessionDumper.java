@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.apache.catalina.core.StandardWrapper;
 import org.apache.catalina.session.StandardSession;
-import org.soyatec.windows.azure.table.TableStorageEntity;
+import org.soyatec.windowsazure.table.ITableServiceEntity;
 
 import uk.co.atomus.session.AtomusSession;
 import uk.co.atomus.session.TomcatSessionStorageEntity;
@@ -54,7 +54,7 @@ public class SessionDumper {
 		sessionDao.setAccountKey(accountKey);
 		sessionDao.setTableName(tableName);
 
-		List<TableStorageEntity> entities = sessionDao.queryEntitiesByKeys(partitionKey, rowKey);
+		List<ITableServiceEntity> entities = sessionDao.queryEntitiesByKeys(partitionKey, rowKey);
 		System.out.println("Found " + entities.size() + " entities");
 
 		SessionMapper sessionMapper = new SessionMapperImpl();
@@ -62,7 +62,7 @@ public class SessionDumper {
 		AtomusManager manager = new AtomusManager();
 		manager.setContainer(new StandardWrapper());
 
-		for (TableStorageEntity tableStorageEntity : entities) {
+		for (ITableServiceEntity tableStorageEntity : entities) {
 			dumpTableStorageEntity(tableStorageEntity, sessionMapper, manager, sessionDeserializer, urlClassLoader);
 		}
 	}
@@ -90,7 +90,7 @@ public class SessionDumper {
 		return urlClassLoader;
 	}
 
-	private static void dumpTableStorageEntity(TableStorageEntity tableStorageEntity, SessionMapper sessionMapper,
+	private static void dumpTableStorageEntity(ITableServiceEntity tableStorageEntity, SessionMapper sessionMapper,
 			AtomusManager manager, SessionDeserializer sessionDeserializer, ClassLoader urlClassLoader)
 			throws Exception {
 		try {

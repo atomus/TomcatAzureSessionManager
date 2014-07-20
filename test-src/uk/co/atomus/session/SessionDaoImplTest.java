@@ -25,7 +25,7 @@ import java.util.Properties;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.soyatec.windows.azure.table.TableStorageEntity;
+import org.soyatec.windowsazure.table.ITableServiceEntity;
 
 import uk.co.atomus.session.service.dao.SessionDaoImpl;
 
@@ -81,7 +81,7 @@ public class SessionDaoImplTest {
 
 	@Test
 	public void testRetrieveEntitiesByKey() throws Exception {
-		List<TableStorageEntity> entities = sessionDao.retrieveEntitiesByKey(partitionKey,
+		List<ITableServiceEntity> entities = sessionDao.retrieveEntitiesByKey(partitionKey,
 				sessionStorageEntity.getRowKey());
 		Assert.assertNotNull(entities);
 		assertEquals(entities.size(), 1);

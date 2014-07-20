@@ -20,8 +20,9 @@ import java.io.ObjectInputStream;
 import org.apache.catalina.Session;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.soyatec.windows.azure.error.StorageException;
-import org.soyatec.windows.azure.table.TableStorageEntity;
+import org.soyatec.windowsazure.error.StorageException;
+import org.soyatec.windowsazure.table.AbstractTableServiceEntity;
+import org.soyatec.windowsazure.table.ITableServiceEntity;
 
 import uk.co.atomus.session.TomcatSessionStorageEntity;
 import uk.co.atomus.session.service.dao.SessionDao;
@@ -84,7 +85,7 @@ public class SessionServiceImpl implements SessionService {
 
 	private TomcatSessionStorageEntity findInStorage(String id) {
 		try {
-			TableStorageEntity storageEntity = sessionDao.retrieveEntity(partitionKey, id);
+			ITableServiceEntity storageEntity = sessionDao.retrieveEntity(partitionKey, id);
 			return storageEntity == null ? null : (TomcatSessionStorageEntity) storageEntity;
 		} catch (StorageException e) {
 			log.error("Error loading from storage", e);
@@ -171,7 +172,6 @@ public class SessionServiceImpl implements SessionService {
 					+ sessionStorageEntity.getLastAccessedTime());
 			return null;
 		}
-		log.debug("found more recent session in storage timeStamp " + sessionStorageEntity.getTimestamp().getTime());
 		return sessionMapper.toObjectInputStream(sessionStorageEntity, classLoader);
 	}
 
